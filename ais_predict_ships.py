@@ -6,7 +6,7 @@ import glob
 import os
 
 # Set the folder path where your files are stored
-folder_path = os.getcwd() + r'\raw_data_rotterdam'
+folder_path = os.getcwd() + r'/raw_data_rotterdam'
 
 # Get a list of all JSON files in the folder
 file_list = glob.glob(os.path.join(folder_path, "raw_ais_data_*.json"))
@@ -22,7 +22,7 @@ for file in file_list:
 # Combine all DataFrames into one
 full_data = pd.concat(dfs, ignore_index=True)
 
-print(full_data)
+
 '''
 Every file contains the ais data of different ships in 1 day!
 Dict summary:
@@ -53,6 +53,10 @@ Dict summary:
     - imo
     - name
 '''
+# Example getting the name and longitude of the third ship 
+name = full_data.iloc[2, 0]['vessel']['name']
+long = full_data.iloc[2, 0]['navigation']['location']['long']
+print(name, long)
 
 
 
