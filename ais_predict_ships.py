@@ -95,17 +95,17 @@ unique_mmsi = []
 #First, create a list which contains all the unique boats
 for index in range(0, full_data.shape[0]):
     if(full_data.iloc[index][0]['device']['mmsi'] not in unique_mmsi):
-        if(full_data.iloc[index][0]['vessel']['name'] == ''):
-            continue
+        #if(full_data.iloc[index][0]['vessel']['name'] == ''):
+        #    continue
 
-        if(full_data.iloc[index][0]['device']['dimensions']['to_port'] == 0):
-            continue
+        #if(full_data.iloc[index][0]['device']['dimensions']['to_port'] == 0):
+        #    continue
 
-        if(full_data.iloc[index][0]['device']['dimensions']['to_bow'] == 0):
-            continue
+        #if(full_data.iloc[index][0]['device']['dimensions']['to_bow'] == 0):
+        #    continue
 
-        if(full_data.iloc[index][0]['device']['dimensions']['to_stern'] == 0):
-            continue
+        #if(full_data.iloc[index][0]['device']['dimensions']['to_stern'] == 0):
+        #    continue
 
         if(full_data.iloc[index][0]['vessel']['type'] != 'cargo' and full_data.iloc[index][0]['vessel']['type'] != 'tanker'):
             continue
