@@ -7,7 +7,9 @@ import os
 import json
 
 # Set the folder path where your files are stored
-folder_path = os.getcwd() + r'\raw_data_rotterdam'
+folder_path = os.getcwd() + r'/raw_data_rotterdam'
+
+print('path = ',folder_path)
 
 # Get a list of all JSON files in the folder
 file_list = glob.glob(os.path.join(folder_path, "raw_ais_data_*.json"))
@@ -19,6 +21,7 @@ dfs = []
 for file in file_list:
     df = pd.read_json(file)  # Read the JSON file into a DataFrame
     dfs.append(df)  # Add it to the list
+
 
 # Combine all DataFrames into one
 full_data = pd.concat(dfs, ignore_index=True)
@@ -125,3 +128,10 @@ for index in range(0, full_data.shape[0]):
             'trips': []
         })
 
+
+status_list = []
+for index in range(0, full_data.shape[0]):
+    if full_data.iloc[index, 0]['navigation']['destination']['name'] not in status_list:
+        status_list.append(full_data.iloc[index, 0]['navigation']['destination']['name'])
+
+print(status_list)
