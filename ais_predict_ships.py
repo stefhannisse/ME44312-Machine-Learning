@@ -91,6 +91,35 @@ Dict summary:
                 - lat
             - course
 '''
+#Create a csv file to save all the lat long locations
+'''
+# Extract the readings where the status is moored or the speed is below 1
+stopped_readings = []
+for index in range(0, full_data.shape[0]):
+    if (full_data.iloc[index][0]['navigation']['speed'] < 0.1):
+        stopped_readings.append({ 'lat': full_data.iloc[index][0]['navigation']['location']['lat'], 'long': full_data.iloc[index][0]['navigation']['location']['long'] })
+
+print('stopped readings length ', len(stopped_readings))
+#Convert to csv
+df = pd.DataFrame(stopped_readings)
+df.to_csv('stopped_readings.csv', index=False)
+
+import matplotlib.pyplot as plt
+plt.scatter(x=df['long'], y=df['lat'])
+plt.show()
+
+exit()
+'''
+
+unique_locations = []
+
+for index in range(0, full_data.shape[0]):
+    if(full_data.iloc[index][0]['navigation']['destination']['name'] not in unique_locations):
+        unique_locations.append(full_data.iloc[index][0]['navigation']['destination']['name'])
+
+print(unique_locations)
+
+exit()
 
 boats = []
 unique_mmsi = []
@@ -128,10 +157,73 @@ for index in range(0, full_data.shape[0]):
             'trips': []
         })
 
+#Add all the data in the specific boat in trips
+for index in range(0, full_data.shape[0] - 2):
+    for boat in boats:
+        if boat['mmsi'] == full_data.iloc[index][0]['device']['mmsi']:
+            #In the trips list, check in the last list if the last status is moored
+            moored = full_data.iloc[index + 1][0]['navigation']['status'] == 'moored'
+            previous_moored = full_data.iloc[index][0]['navigation']['status'] == 'moored'
+            next_moored = full_data.iloc[index + 2][0]['navigation']['status'] == 'moored'
 
+            if(not moored and previous_moored):
+                #The boat just left for a new trip
+                boat['trips'].append({
+                    'departure_time': full_data.iloc[index + 1][0]['navigation']['time'],
+                    'departure': { 'lat': full_data.iloc[index + 1][0]['navigation']['location']['lat'], 'long': full_data.iloc[index + 1][0]['navigation']['location']['long'] },
+                    'arrival_time': None,
+                    'arrival': None,
+                    'elapsed_time': None,
+                    'eta': full_data.iloc[index + 1][0]['navigation']['destination']['eta'],
+                    'recordings': []
+                })
+
+            if(not moored and len(boat['trips']) > 0):
+                continue
+                # boat['trips'][-1]['recordings'].append({
+                #     'draught': full_data.iloc[index + 1][0]['navigation']['draught'],
+                #     'time': full_data.iloc[index + 1][0]['navigation']['time'],
+                #     'speed': full_data.iloc[index + 1][0]['navigation']['speed'],
+                #     'heading': full_data.iloc[index + 1][0]['navigation']['heading'],
+                #     'location': {
+                #         'lat': full_data.iloc[index + 1][0]['navigation']['location']['lat'],
+                #         'long': full_data.iloc[index + 1][0]['navigation']['location']['long']
+                #     },
+                #     'course': full_data.iloc[index + 1][0]['navigation']['course']
+                # })
+
+            if(not moored and next_moored and len(boat['trips']) > 0):
+                #The boat just arrived at the destination
+                boat['trips'][-1]['arrival_time'] = full_data.iloc[index + 1][0]['navigation']['time']
+                boat['trips'][-1]['arrival'] = { 'lat': full_data.iloc[index + 1][0]['navigation']['location']['lat'], 'long': full_data.iloc[index + 1][0]['navigation']['location']['long'] }
+                #boat['trips'][-1]['elapsed_time'] = full_data.iloc[index + 1][0]['navigation']['time'] - boat['trips'][-1]['departure_time']
+
+            #Append to this boat
+            # boat['trips'].append({
+            #     'status': full_data.iloc[index][0]['navigation']['status'],
+            #     'eta': full_data.iloc[index][0]['navigation']['destination']['eta'],
+            #     'location': {
+            #         'lat': full_data.iloc[index][0]['navigation']['location']['lat'],
+            #         'long': full_data.iloc[index][0]['navigation']['location']['long']
+            #     },
+            #     'speed': full_data.iloc[index][0]['navigation']['speed'],
+            #     'heading': full_data.iloc[index][0]['navigation']['heading'],
+            #     'course': full_data.iloc[index][0]['navigation']['course'],
+            #     'time': full_data.iloc[index][0]['navigation']['time'],
+            # })
+
+
+#Convert to csv
+df = pd.DataFrame(boats)
+print(df.to_html())
+#print(df.to_markdown())
+#df.to_csv('boats.csv', index=False)
+
+'''
 status_list = []
 for index in range(0, full_data.shape[0]):
     if full_data.iloc[index, 0]['navigation']['destination']['name'] not in status_list:
         status_list.append(full_data.iloc[index, 0]['navigation']['destination']['name'])
 
 print(status_list)
+'''
