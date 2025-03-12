@@ -125,7 +125,7 @@ if __name__ == '__main__':
                         'departure': { 'lat': location['destination']['lat'], 'long': location['destination']['long'], 'name': location['destination']['name'] },
                         'arrival_time': None,
                         'arrival': None,
-                        'elapsed_time': None,
+                        'eta': full_data.iloc[index][0]['navigation']['destination']['eta'],
                         'recordings': []
                     })
 
