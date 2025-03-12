@@ -9,7 +9,7 @@ import geopy.distance
 from datetime import datetime
 
 # Set the folder path where your files are stored
-folder_path = os.getcwd() + r'/raw_data_rotterdam'
+folder_path = r'C:\Users\stefh\PycharmProjects\ME44312-project\raw_data_rotterdam'
 
 print('path = ',folder_path)
 
@@ -41,15 +41,15 @@ Zwartewaal(51.8805442,4.2363681)
 locations = [
     {
         'name': 'Moerdijke Rotterdam',
-        'lat': 51.6849479,
-        'long': 4.5775417,
-        'radius': 4
+        'lat': 51.8805442,
+        'long': 4.2363681,
+        'radius': 2
     },
     {
         'name': 'Maasvlakte Moerdijk',
         'lat': 51.9524623,
         'long': 4.0190481,
-        'radius': 10
+        'radius': 4
     },
     {
         'name': 'Waalhaven',
@@ -59,8 +59,8 @@ locations = [
     },
     {
         'name': 'FrankFurt Osthaven',
-        'lat': 50.1086239,
-        'long': 8.7033114,
+        'lat': 51.8805442,
+        'long': 4.2363681,
         'radius': 1
     },
     {
@@ -125,7 +125,7 @@ if __name__ == '__main__':
                         'departure': { 'lat': location['destination']['lat'], 'long': location['destination']['long'], 'name': location['destination']['name'] },
                         'arrival_time': None,
                         'arrival': None,
-                        'elapsed_time': None,
+                        'eta': full_data.iloc[index][0]['navigation']['destination']['eta'],
                         'recordings': []
                     })
 
