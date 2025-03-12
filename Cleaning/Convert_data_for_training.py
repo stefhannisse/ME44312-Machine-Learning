@@ -85,6 +85,7 @@ for boat in data:
             'arrival_lat': trip['arrival']['lat'],
             'arrival_long': trip['arrival']['long'],
             'arrival_name': trip['arrival']['name'],
+            'eta': trip['arrival']['eta'],
         }
 
         for recording in trip['recordings']:
