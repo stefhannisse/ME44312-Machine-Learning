@@ -5,7 +5,7 @@ import os
 print('dir', os.getcwd())
 
 #Import a json file
-with open('Cleaning/boats.json', 'r') as f:
+with open('boats.json', 'r') as f:
     data = json.load(f)
 
 #print(json.dumps(data, indent=4))
@@ -35,7 +35,7 @@ for boat in data:
 
         
 #Save the data to a JSON file
-with open('Cleaning/boats_with_distance.json', 'w') as outfile:
+with open('boats_with_distance.json', 'w') as outfile:
     json.dump(data, outfile, indent=4)
 
 #Now add the distance between each recording to get distance to end destination
@@ -56,11 +56,11 @@ for boat in data:
 
 
 #Save the data to a JSON file
-with open('Cleaning/boats_with_end_distance.json', 'w') as outfile:
+with open('boats_with_end_distance.json', 'w') as outfile:
     json.dump(data, outfile, indent=4)
 
 result = []
-
+index = 0
 #For every boat and every trip, check if the arrival information is not null
 for boat in data:
     boat_info = {
@@ -100,13 +100,20 @@ for boat in data:
                 'distance_to_end': recording['distance_to_end']
             }
 
+            # if(recording['time'] > trip['arrival_time']):
+            #     print('Deze time ligt later dan de arrival')
+            #     index += 1
+            #     continue
+
             result.append({
                 **boat_info,
                 **trip_info,
                 **recording_info
             })
 
+
+print('oZoveel punten waren ongeldig: {}'.format(index))
 #print(json.dumps(result, indent=4))
 #Save the data to a JSON file
-with open('Cleaning/boats_cleaned.json', 'w') as outfile:
+with open('boats_cleaned.json', 'w') as outfile:
     json.dump(result, outfile, indent=4)
