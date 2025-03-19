@@ -264,7 +264,8 @@ if __name__ == '__main__':
                     'location_lat': recording['location']['lat'],
                     'location_long': recording['location']['long'],
                     'course': recording['course'],
-                    'distance_to_end': recording['distance_to_end']
+                    'distance_to_end': recording['distance_to_end'],
+                    'time_delta': trip['arrival_time'] - recording['time']
                 }
 
                 if(recording['time'] > trip['arrival_time']):
@@ -274,7 +275,7 @@ if __name__ == '__main__':
                 #Check if the boat needs an impossible speed to reach the destination
                 timetillend = trip['arrival_time'] - recording['time'] # Time till end in seconds
 
-                if(recording['distance_to_end'] / timetillend > 10):
+                if(recording['distance_to_end'] / timetillend > 15):
                     indexFault += 1
                     continue
 
