@@ -1,9 +1,8 @@
-from math import isnan
-
 import numpy as np
 from sklearn.linear_model import LinearRegression
 import pandas as pd
 import os
+import matplotlib.pyplot as plt
 
 #Change the path to the location of the cleaned data
 path_to_data = os.getcwd() + r'\..\Cleaning\boats_cleaned.json'
@@ -23,10 +22,16 @@ columns_to_check = ['speed', 'distance_to_end', 'time', 'draught', 'course', 'to
 #Normalize the data
 data[columns_to_check] = (data[columns_to_check] - data[columns_to_check].mean()) / data[columns_to_check].std()
 
+plt.figure(figsize=(20, 10))
+
 #For every feature, create a linear regression model to check the correlation with the ETA
 for feature in data.columns:
     if feature not in columns_to_check:
         continue
+
+    if(feature == 'draught'):
+        #Filter out the values where the draught is higher than 7.5
+        data = data[data['draught'] < 7.5]
 
     #Create a linear regression model
     model = LinearRegression()
@@ -40,7 +45,7 @@ for feature in data.columns:
         continue
 
     #Get the ETA values
-    y = data['arrival_time'].values
+    y = data['time_delta'].values
 
     #Fit the model
     model.fit(X, y)
@@ -48,15 +53,25 @@ for feature in data.columns:
     #Print the score
     print('Score for feature', feature, 'is', model.score(X, y))
 
+    #Create a graph to show the correlation
+    plt.scatter(X, y, color='black')
+
+    #Plot the regression line
+    plt.plot(X, model.predict(X), color='blue', linewidth=3)
+
+    #Set the labels
+    plt.xlabel(feature)
+    plt.ylabel('ETA')
+    plt.show()
     #Print the coefficients
-    print('Coefficients for feature', feature, 'are', model.coef_)
+    #print('Coefficients for feature', feature, 'are', model.coef_)
 
     #Print the intercept
-    print('Intercept for feature', feature, 'is', model.intercept_)
+    #print('Intercept for feature', feature, 'is', model.intercept_)
 
-    print('------------------------------------')
+    #print('------------------------------------')
 
     #Print the prediction for the first 5 values
-    print('Predictions for feature', feature, 'are', model.predict(X[:5]))
-    print('------------------------------------')
-    print('------------------------------------')
+    #print('Predictions for feature', feature, 'are', model.predict(X[:5]))
+    #print('------------------------------------')
+    #print('------------------------------------')
