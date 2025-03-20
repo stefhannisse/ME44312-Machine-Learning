@@ -9,7 +9,7 @@ import sys
 import warnings
 
 # Set the folder path where your files are stored
-folder_path = os.getcwd() + r'\..\raw_data_rotterdam'
+folder_path = os.getcwd() + r'/raw_data_rotterdam'
 
 print('path = ',folder_path)
 
@@ -43,41 +43,83 @@ Zwartewaal(51.8805442,4.2363681)
 # Define the locations
 locations = [
     {
-        'name': 'Moerdijke Rotterdam',
-        'lat': 51.8805442,
-        'long': 4.2363681,
+        'name': 'Moerdijke Rotterdam',  # Checked
+        'lat': 51.682994,
+        'long': 4.608882,
         'radius': 2
     },
     {
-        'name': 'Maasvlakte Moerdijk',
+        'name': 'Maasvlakte Moerdijk',  # Checked
         'lat': 51.9524623,
         'long': 4.0190481,
         'radius': 4
     },
     {
-        'name': 'Waalhaven',
+        'name': 'Rotterdam Waalhaven',  # Checked
         'lat': 51.8878903,
         'long': 4.4227321,
         'radius': 4
     },
     {
-        'name': 'FrankFurt Osthaven',
-        'lat': 51.8805442,
-        'long': 4.2363681,
-        'radius': 1
+        'name': 'FrankFurt Osthaven',   # Checked
+        'lat': 50.111643,
+        'long': 8.733333,
+        'radius': 2
     },
     {
-        'name': 'Oosterhout',
+        'name': 'Oosterhout',       # Checked
         'lat': 51.6625902,
         'long': 4.8455511,
         'radius': 1
     },
     {
-        'name': 'Zwartewaal',
-        'lat': 51.8805442,
-        'long': 4.2363681,
-        'radius': 1
-    }
+        'name': 'Zwartewaal',       # Checked
+        'lat': 51.881857,
+        'long': 4.246900,
+        'radius': 0.710
+    },
+    {
+        'name': 'Botlek (rotterdam)',  # Checked  
+        'lat': 51.880953,
+        'long': 4.305812,
+        'radius': 1.3185
+    },
+    {
+        'name': 'Basel (andere haven)',  # Checked
+        'lat': 47.585465,
+        'long': 7.599205,
+        'radius': 0.514
+    },
+    {
+        'name': 'Basel auhafen',    # Checked
+        'lat': 47.542244,
+        'long': 7.662985,
+        'radius': 0.722
+    },
+    {
+        'name': 'Bonn hafen',    # Checked
+        'lat': 50.744898,
+        'long': 7.066502,
+        'radius': 2.314
+    },
+    {
+        'name': 'Duisburg hafen',    # Checked
+        'lat': 51.451649,
+        'long': 6.765734,
+        'radius': 2.683
+    },
+    {
+        'name': 'Antwerpen',   # Checked
+        'lat': 51.289923,
+        'long': 4.287054,
+        'radius': 8.419
+    },
+    {
+        'name': 'Vlissingen',   # Checked
+        'lat': 51.451666,
+        'long': 3.707321,
+        'radius': 1.394
+    }  
 ]
 
 boats = [
@@ -122,7 +164,9 @@ def print_progress_bar(iteration, total, length=50):
 if __name__ == '__main__':
     #Check for every reading if the ship is at a specific location, if so start the trip
     start = datetime.now()
-
+    full_data['navigation.time'] = pd.to_datetime(full_data.apply(lambda x: x[0]['navigation']['time'], axis=1))
+    full_data = full_data.sort_values(by='navigation.time').reset_index(drop=True)
+    
     total = full_data.shape[0]
     for index in range(total):
         if index % 100 == 0 or index == total - 1:  # Update every 100 iterations
@@ -294,3 +338,48 @@ if __name__ == '__main__':
     # Save the data to a JSON file
     with open('boats_cleaned.json', 'w') as outfile:
         json.dump(result, outfile, indent=4)
+
+
+    print('Saving trip recordings per boat...')
+
+trip_recordings = {}
+
+for boat in boats:
+    trip_recordings[boat['name']] = []
+    
+    for trip in boat['trips']:
+        if trip['arrival_time'] is None:
+            continue
+        
+        trip_data = {
+            'departure_time': trip['departure_time'],
+            'departure_lat': trip['departure']['lat'],
+            'departure_long': trip['departure']['long'],
+            'departure_name': trip['departure']['name'],
+            'arrival_time': trip['arrival_time'],
+            'arrival_lat': trip['arrival']['lat'],
+            'arrival_long': trip['arrival']['long'],
+            'arrival_name': trip['arrival']['name'],
+            'recordings': []
+        }
+
+        for recording in trip['recordings']:
+            recording_data = {
+                'time': recording['time'],
+                'speed': recording['speed'],
+                'heading': recording['heading'],
+                'location_lat': recording['location']['lat'],
+                'location_long': recording['location']['long'],
+                'course': recording['course'],
+                'distance_to_end': recording['distance_to_end']
+            }
+            trip_data['recordings'].append(recording_data)
+        
+        trip_recordings[boat['name']].append(trip_data)
+
+# Save the trip recordings to a JSON file
+output_file = 'trip_recordings.json'
+with open(output_file, 'w') as outfile:
+    json.dump(trip_recordings, outfile, indent=4)
+
+print(f'Trip recordings saved to {output_file}')
