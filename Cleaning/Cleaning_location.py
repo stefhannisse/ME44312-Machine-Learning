@@ -50,15 +50,15 @@ locations = [
     },
     {
         'name': 'Maasvlakte Moerdijk',  # Checked
-        'lat': 51.9524623,
-        'long': 4.0190481,
-        'radius': 4
+        'lat': 51.953541,
+        'long': 4.018916,
+        'radius': 3.65
     },
     {
         'name': 'Rotterdam Waalhaven',  # Checked
-        'lat': 51.8878903,
-        'long': 4.4227321,
-        'radius': 4
+        'lat': 51.893747,
+        'long': 4.411727,
+        'radius': 3.104
     },
     {
         'name': 'FrankFurt Osthaven',   # Checked
@@ -96,12 +96,12 @@ locations = [
         'long': 7.662985,
         'radius': 0.722
     },
-    {
-        'name': 'Bonn hafen',    # Checked
-        'lat': 50.744898,
-        'long': 7.066502,
-        'radius': 2.314
-    },
+    # {
+    #     'name': 'Bonn hafen',    # Checked
+    #     'lat': 50.744898,
+    #     'long': 7.066502,
+    #     'radius': 2.314
+    # },
     {
         'name': 'Duisburg hafen',    # Checked
         'lat': 51.451649,
