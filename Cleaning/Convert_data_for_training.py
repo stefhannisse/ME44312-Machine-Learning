@@ -115,5 +115,5 @@ for boat in data:
 print('oZoveel punten waren ongeldig: {}'.format(index))
 #print(json.dumps(result, indent=4))
 #Save the data to a JSON file
-with open('boats_cleaned.json', 'w') as outfile:
+with open('boats_cleaned_unique.json', 'w') as outfile:
     json.dump(result, outfile, indent=4)

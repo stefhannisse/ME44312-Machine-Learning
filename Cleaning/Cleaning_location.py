@@ -8,8 +8,14 @@ from datetime import datetime
 import sys
 import warnings
 
-# Set the folder path where your files are stored
-folder_path = os.getcwd() + r'/raw_data_rotterdam'
+daan_pc = False
+
+if(daan_pc):
+    # Set the folder path where your files are stored
+    folder_path = os.getcwd() + r'/raw_data_rotterdam'
+else:
+    # Set the folder path where your files are stored
+    folder_path = os.getcwd() + r'/../raw_data_rotterdam'
 
 print('path = ',folder_path)
 
@@ -287,6 +293,9 @@ if __name__ == '__main__':
             'imo': boat['imo'],
         }
 
+        if(boat['mmsi'] != 211560210): #Now it is aarburg
+            continue
+
         for trip in boat['trips']:
             if (trip['arrival_time'] == None):
                 continue
@@ -336,12 +345,13 @@ if __name__ == '__main__':
 
     # print(json.dumps(result, indent=4))
     # Save the data to a JSON file
-    with open('boats_cleaned.json', 'w') as outfile:
+    with open('boats_cleaned_aarburg.json', 'w') as outfile:
         json.dump(result, outfile, indent=4)
 
 
     print('Saving trip recordings per boat...')
 
+exit()
 trip_recordings = {}
 
 for boat in boats:
@@ -378,7 +388,7 @@ for boat in boats:
         trip_recordings[boat['name']].append(trip_data)
 
 # Save the trip recordings to a JSON file
-output_file = 'trip_recordings.json'
+output_file = 'trip_recordings_unique.json'
 with open(output_file, 'w') as outfile:
     json.dump(trip_recordings, outfile, indent=4)
 
