@@ -14,8 +14,7 @@ import tensorflow as tf
 from tensorflow import keras
 from keras import activations
 
-#import data
-data = pd.read_json('Cleaning/boats_cleaned.json', convert_dates=False)
+data = pd.read_json(os.getcwd() + r'/Cleaning/boats_cleaned_trainig.json', convert_dates=False)
 # print(data.head())
 
 #create df with only inputs and a df with labels (arrival_time)
@@ -70,6 +69,10 @@ loss, mse = model.evaluate(X_test, y_test)
 print('Test loss:', loss)
 print('Test mse:', mse)
 
+# Save the model to a file
+model.save('trained_model.h5')
+print("Model saved to 'trained_model.h5'")
+
 # Make predictions
 predictions = model.predict(X_test)
 print(predictions)
@@ -94,4 +97,3 @@ plt.xlabel('Actual Time-to-Arrival')
 plt.ylabel('Predicted Time-to-Arrival')
 plt.title('Predicted vs Actual')
 plt.show()
-
