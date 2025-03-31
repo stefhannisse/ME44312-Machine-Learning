@@ -293,7 +293,7 @@ if __name__ == '__main__':
             'imo': boat['imo'],
         }
 
-        if(boat['mmsi'] != 211560210): #Now it is aarburg
+        if(boat['mmsi'] != 244010773): #Now it is Levante
             continue
 
         for trip in boat['trips']:
@@ -345,7 +345,7 @@ if __name__ == '__main__':
 
     # print(json.dumps(result, indent=4))
     # Save the data to a JSON file
-    with open('boats_cleaned_aarburg.json', 'w') as outfile:
+    with open('boats_cleaned_only_levante.json', 'w') as outfile:
         json.dump(result, outfile, indent=4)
 
 
