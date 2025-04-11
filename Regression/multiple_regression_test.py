@@ -14,10 +14,15 @@ import matplotlib.pyplot as plt
 path_to_data = os.getcwd() + r'\..\Cleaning\boats_cleaned.json'
 
 # Import the boats_cleaned
-data = pd.read_json(path_to_data, convert_dates=False)
+#data = pd.read_json(path_to_data, convert_dates=False)
+#
+# Remove the values where the time_delta > 1.5e6
+
+# Import the x_test from Neural net
+data = pd.read_json(os.getcwd() + r'\..\Neural_net\x_test.json', convert_dates=False)
 
 #Remove the values where the time_delta > 1.5e6
-data = data[data['time_delta'] < 1.5e6]
+#data = data[data['time_delta'] < 1.5e6]
 
 #Print the head
 #print(data.head())
@@ -48,26 +53,38 @@ if np.isnan(np.min(X)):
 print('Amount of data points:', X)
 
 #Get the ETA values
-y = data['time_delta'].values
+#y = data['time_delta'].values
+#Get the y values from the Neural net folder, file y_test.json
+y = pd.read_json(os.getcwd() + r'\..\Neural_net\y_test.json', convert_dates=False).values.flatten()
+
+#indexes = [i for i, v in enumerate(y) if v > 1.5e6]
+#Remove these indexes from y and X
+#y = np.delete(y, indexes)
+#X = np.delete(X, indexes, axis=0)
 
 #Fit the model
-model.fit(X, y)
+fit = model.fit(X, y)
 
 #Print the score
 print('Score for features draught and distance to end is', model.score(X, y))
 
 #Calculate the mean squared error
-#mse = np.mean((model.predict(X) - y) ** 2)
-#print('Mean Squared Error:', mse)
+mse = np.mean((model.predict(X) - y) ** 2)
+print('Mean Squared Error:', mse)
 
 #Plot the estimated arrival time and the actual arrival time
-plt.scatter(data['time_delta'], model.predict(X), color='black')
+plt.scatter(y, model.predict(X), color='black')
 plt.xlabel('Actual Time Delta')
 plt.ylabel('Predicted Time Delta')
 #Make sure the x axis and y axis have the same scale
 plt.axis('equal')
+
+#Plot the predicted line from the model fit
+plt.plot([y.min(), y.max()], [model.predict(X).min(), model.predict(X).max()], color='blue', linewidth=3)
+
+
 #Draw a line on x=y to show the perfect prediction
-plt.plot([data['time_delta'].min(), data['time_delta'].max()], [data['time_delta'].min(), data['time_delta'].max()], color='red', linestyle='--')
+plt.plot([y.min(), y.max()], [y.min(), y.max()], color='red', linestyle='--')
 plt.title('Actual vs Predicted Time Delta')
 plt.show()
 
