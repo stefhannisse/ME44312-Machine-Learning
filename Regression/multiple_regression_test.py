@@ -72,20 +72,33 @@ pred = model.predict(X)
 rmse = np.sqrt(np.mean((pred - y) ** 2))
 print('Root Mean Squared Error:', rmse)
 
+plt.figure(figsize=(8, 6))
 #Plot the estimated arrival time and the actual arrival time
-plt.scatter(y, pred, color='black')
+plt.scatter(y, pred, alpha=0.6)
 plt.xlabel('Actual Time to arrival [s]')
 plt.ylabel('Predicted Time to arrival [s]')
 #Make sure the x axis and y axis have the same scale
-plt.axis('equal')
 
 #Plot the predicted line from the model fit
-plt.plot([y.min(), y.max()], [model.predict(X).min(), pred.max()], color='blue', linewidth=3)
+# plt.plot([y.min(), y.max()], [model.predict(X).min(), pred.max()], color='blue', linewidth=3)
 
 
 #Draw a line on x=y to show the perfect prediction
 plt.plot([y.min(), y.max()], [y.min(), y.max()], color='red', linestyle='--')
-plt.title('Actual vs Predicted Time Delta')
+
+plt.grid(True)
+plt.ylim(-80000, 2080000)
+plt.xlim(-80000, 2080000)
+plt.show()
+
+plt.figure(figsize=(8, 6))
+error = pred - y
+plt.scatter(y, error, alpha=0.6)
+plt.axhline(0, color='red', linestyle='--')
+
+plt.xlabel('Actual Time to arrival [s]')
+plt.ylabel('Error [s]')
+plt.grid(True)
 plt.show()
 
 #Create a graph to show the correlation

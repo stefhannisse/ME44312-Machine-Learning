@@ -56,12 +56,8 @@ print()
 #build model
 input_dim = X_train.shape[1]
 model = keras.models.Sequential([
-    keras.layers.Dense(256, activation='relu', input_shape=(input_dim,)),
-    keras.layers.Dropout(0.3),  # Add dropout to prevent overfitting
-    keras.layers.Dense(128, activation='relu'),
-    keras.layers.Dropout(0.3),
+    keras.layers.InputLayer(input_shape=(input_dim,)),
     keras.layers.Dense(64, activation='relu'),
-    keras.layers.Dropout(0.2),
     keras.layers.Dense(32, activation='relu'),
     keras.layers.Dense(1)
 ])
@@ -71,7 +67,7 @@ optimizer = tf.keras.optimizers.Adam(clipnorm=1.0)
 # Implement early stopping
 early_stopping = keras.callbacks.EarlyStopping(
     monitor='val_loss', 
-    patience=10,  # Stop training if validation loss doesn't improve for 10 epochs
+    patience=20,  # Stop training if validation loss doesn't improve for 10 epochs
     restore_best_weights=True
 )
 model.compile(loss='mean_squared_error', optimizer=optimizer, metrics=['mean_squared_error'])
@@ -113,10 +109,23 @@ y_test = y_scaler.inverse_transform(y_test)
 plt.figure(figsize=(8, 6))
 plt.scatter(y_test, predictions, alpha=0.6)
 plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], color='red', linestyle='--')  # Perfect prediction line
-plt.xlabel('Actual Time-to-Arrival')
-plt.ylabel('Predicted Time-to-Arrival')
-plt.title('Predicted vs Actual')
+plt.xlabel('Actual Time-to-Arrival [s]')
+plt.ylabel('Predicted Time-to-Arrival [s]')
+plt.ylim(-80000, 2080000)
+plt.xlim(-80000, 2080000)
+plt.grid(True)
 plt.show()
+
+plt.figure(figsize=(8, 6))
+error = predictions - y_test
+plt.scatter(y_test, error, alpha=0.6)
+plt.axhline(0, color='red', linestyle='--')
+
+plt.xlabel('Actual Time to arrival [s]')
+plt.ylabel('Error [s]')
+plt.grid(True)
+plt.show()
+
 
 rmse = np.sqrt(np.mean((predictions - y_test) ** 2))
 print('Root Mean Squared Error:', rmse)
