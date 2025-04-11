@@ -47,5 +47,8 @@ plt.legend()
 plt.grid(True)
 plt.show()
 
+rmse = np.sqrt(np.mean((predictions - y) ** 2))
+print('Root Mean Squared Error:', rmse)
+
 
 

@@ -39,6 +39,10 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 print(X_train.head())
 print(y_train.head())
 
+#export X_test and y_test to json
+X_test.to_json('X_test.json', orient='records')
+y_test.to_json('y_test.json', orient='records')
+
 #scale target data
 y_scaler = MinMaxScaler()
 y_train = y_scaler.fit_transform(y_train.values.reshape(-1, 1))
@@ -113,3 +117,6 @@ plt.xlabel('Actual Time-to-Arrival')
 plt.ylabel('Predicted Time-to-Arrival')
 plt.title('Predicted vs Actual')
 plt.show()
+
+rmse = np.sqrt(np.mean((predictions - y_test) ** 2))
+print('Root Mean Squared Error:', rmse)

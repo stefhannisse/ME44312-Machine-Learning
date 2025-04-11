@@ -11,7 +11,7 @@ import os
 import matplotlib.pyplot as plt
 
 #Change the path to the location of the cleaned data
-path_to_data = os.getcwd() + r'\..\Cleaning\boats_cleaned.json'
+path_to_data = os.getcwd() + r'/../Cleaning/boats_cleaned.json'
 
 # Import the boats_cleaned
 #data = pd.read_json(path_to_data, convert_dates=False)
@@ -19,7 +19,7 @@ path_to_data = os.getcwd() + r'\..\Cleaning\boats_cleaned.json'
 # Remove the values where the time_delta > 1.5e6
 
 # Import the x_test from Neural net
-data = pd.read_json(os.getcwd() + r'\..\Neural_net\x_test.json', convert_dates=False)
+data = pd.read_json(os.getcwd() + r'/Neural_net/x_test.json', convert_dates=False)
 
 #Remove the values where the time_delta > 1.5e6
 #data = data[data['time_delta'] < 1.5e6]
@@ -55,7 +55,7 @@ print('Amount of data points:', X)
 #Get the ETA values
 #y = data['time_delta'].values
 #Get the y values from the Neural net folder, file y_test.json
-y = pd.read_json(os.getcwd() + r'\..\Neural_net\y_test.json', convert_dates=False).values.flatten()
+y = pd.read_json(os.getcwd() + r'/Neural_net/y_test.json', convert_dates=False).values.flatten()
 
 #indexes = [i for i, v in enumerate(y) if v > 1.5e6]
 #Remove these indexes from y and X
@@ -64,23 +64,23 @@ y = pd.read_json(os.getcwd() + r'\..\Neural_net\y_test.json', convert_dates=Fals
 
 #Fit the model
 fit = model.fit(X, y)
-
 #Print the score
 print('Score for features draught and distance to end is', model.score(X, y))
 
 #Calculate the mean squared error
-mse = np.mean((model.predict(X) - y) ** 2)
-print('Mean Squared Error:', mse)
+pred = model.predict(X)
+rmse = np.sqrt(np.mean((pred - y) ** 2))
+print('Root Mean Squared Error:', rmse)
 
 #Plot the estimated arrival time and the actual arrival time
-plt.scatter(y, model.predict(X), color='black')
-plt.xlabel('Actual Time Delta')
-plt.ylabel('Predicted Time Delta')
+plt.scatter(y, pred, color='black')
+plt.xlabel('Actual Time to arrival [s]')
+plt.ylabel('Predicted Time to arrival [s]')
 #Make sure the x axis and y axis have the same scale
 plt.axis('equal')
 
 #Plot the predicted line from the model fit
-plt.plot([y.min(), y.max()], [model.predict(X).min(), model.predict(X).max()], color='blue', linewidth=3)
+plt.plot([y.min(), y.max()], [model.predict(X).min(), pred.max()], color='blue', linewidth=3)
 
 
 #Draw a line on x=y to show the perfect prediction
