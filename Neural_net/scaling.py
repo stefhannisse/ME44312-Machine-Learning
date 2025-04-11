@@ -14,7 +14,7 @@ import tensorflow as tf
 from tensorflow import keras
 from keras import activations
 
-data = pd.read_json(os.getcwd() + r'/Cleaning/boats_cleaned_trainig.json', convert_dates=False)
+data = pd.read_json(os.getcwd() + r'/Cleaning/boats_cleaned_training.json', convert_dates=False)
 # print(data.head())
 
 #create df with only inputs and a df with labels (arrival_time)
@@ -52,19 +52,36 @@ print()
 
 #build model
 input_dim = X_train.shape[1]
-
 model = keras.models.Sequential([
-    keras.layers.Dense(64, activation='relu', input_shape=(input_dim,)),
+    keras.layers.Dense(256, activation='relu', input_shape=(input_dim,)),
+    keras.layers.Dropout(0.3),  # Add dropout to prevent overfitting
+    keras.layers.Dense(128, activation='relu'),
+    keras.layers.Dropout(0.3),
+    keras.layers.Dense(64, activation='relu'),
+    keras.layers.Dropout(0.2),
     keras.layers.Dense(32, activation='relu'),
-    keras.layers.Dense(16, activation='relu'),
     keras.layers.Dense(1)
 ])
 
 optimizer = tf.keras.optimizers.Adam(clipnorm=1.0)
+
+# Implement early stopping
+early_stopping = keras.callbacks.EarlyStopping(
+    monitor='val_loss', 
+    patience=10,  # Stop training if validation loss doesn't improve for 10 epochs
+    restore_best_weights=True
+)
 model.compile(loss='mean_squared_error', optimizer=optimizer, metrics=['mean_squared_error'])
 
 #train model
-history = model.fit(X_train, y_train, epochs=200, validation_data=(X_test, y_test))
+history = model.fit(
+    X_train, 
+    y_train, 
+    epochs=400, 
+    validation_data=(X_test, y_test), 
+    callbacks=[early_stopping]
+)
+
 loss, mse = model.evaluate(X_test, y_test)
 print('Test loss:', loss)
 print('Test mse:', mse)

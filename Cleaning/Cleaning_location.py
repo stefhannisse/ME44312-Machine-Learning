@@ -8,7 +8,7 @@ from datetime import datetime
 import sys
 import warnings
 
-daan_pc = False
+daan_pc = True
 
 if(daan_pc):
     # Set the folder path where your files are stored
@@ -125,7 +125,13 @@ locations = [
         'lat': 51.451666,
         'long': 3.707321,
         'radius': 1.394
-    }  
+    },  
+    {
+        'name': 'Amsterdam',   # Checked
+        'lat': 52.403993,
+        'long': 4.777323,
+        'radius': 1.797
+    }
 ]
 
 boats = [
@@ -293,7 +299,7 @@ if __name__ == '__main__':
             'imo': boat['imo'],
         }
 
-        if(boat['mmsi'] != 211560210): #Now it is aarburg
+        if (boat['mmsi'] == 211560210): #Now it is aarburg
             continue
 
         for trip in boat['trips']:
@@ -345,7 +351,7 @@ if __name__ == '__main__':
 
     # print(json.dumps(result, indent=4))
     # Save the data to a JSON file
-    with open('boats_cleaned_aarburg.json', 'w') as outfile:
+    with open('boats_cleaned_training.json', 'w') as outfile:
         json.dump(result, outfile, indent=4)
 
 
