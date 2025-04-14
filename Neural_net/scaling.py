@@ -73,7 +73,7 @@ model.compile(loss='mean_squared_error', optimizer=optimizer, metrics=['mean_squ
 history = model.fit(
     X_train, 
     y_train, 
-    epochs=400, 
+    epochs=200, 
     validation_data=(X_test, y_test), 
     callbacks=[early_stopping]
 )
