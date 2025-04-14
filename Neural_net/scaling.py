@@ -14,7 +14,7 @@ import tensorflow as tf
 from tensorflow import keras
 from keras import activations
 
-data = pd.read_json(os.getcwd() + r'/Cleaning/boats_cleaned_training.json', convert_dates=False)
+data = pd.read_json(os.getcwd() + r'/Cleaning/training_data.json', convert_dates=False)
 # print(data.head())
 
 #create df with only inputs and a df with labels (arrival_time)
@@ -35,7 +35,7 @@ X = pd.DataFrame(X, columns=['to_port','to_bow','to_stern', 'to_starboard','spee
 y = data['arrival_time'] - data['time']
 y = np.clip(y, 0, None)  # Clip negative values
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.22222, random_state=1) #This gives 70/20/10 split as this is the 90 part
 print(X_train.head())
 print(y_train.head())
 
@@ -49,9 +49,6 @@ y_train = y_scaler.fit_transform(y_train.values.reshape(-1, 1))
 y_test = y_scaler.transform(y_test.values.reshape(-1, 1))
 
 print(X.isna().sum())  # Check for NaNs
-
-#split data
-print()
 
 #build model
 input_dim = X_train.shape[1]
@@ -67,7 +64,7 @@ optimizer = tf.keras.optimizers.Adam(clipnorm=1.0)
 # Implement early stopping
 early_stopping = keras.callbacks.EarlyStopping(
     monitor='val_loss', 
-    patience=20,  # Stop training if validation loss doesn't improve for 10 epochs
+    patience=15,  # Stop training if validation loss doesn't improve for 15 epochs
     restore_best_weights=True
 )
 model.compile(loss='mean_squared_error', optimizer=optimizer, metrics=['mean_squared_error'])
