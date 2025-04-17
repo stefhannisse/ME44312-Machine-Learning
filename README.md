@@ -3,11 +3,11 @@
 This project was developed for the course ME44312 at TU Delft by team number 2. It uses machine learning techniques to predict vessel arrival times based on AIS (Automatic Identification System) data.
 
 ## Project Team
-- J. Lakeman (5171156)
-- D. Exterkate (5169917)
+- J.I.J. Lakeman (5171156)
+- D.H. Exterkate (5169917)
 - L.J. Schonewille (4878345)
 - B. Spée (5414776)
-- Stef Hannisse (6061818)
+- S.T.W. Hannisse (6061818)
 
 ## Project Structure
 
