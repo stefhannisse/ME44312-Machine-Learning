@@ -38,6 +38,7 @@ for file in file_list:
 full_data = pd.concat(dfs, ignore_index=True)
 
 '''
+Find the routes by creating geofences around the ports, the ports have the following coordinates:
 Moerdijke Rotterdam (51.6849479, 4.5775417)
 Maasvlakte Moerdijk (51.9524623,4.0190481)
 Waalhaven(51.8878903,4.4227321)
@@ -46,7 +47,7 @@ Oosterhout(51.6625902,4.8455511)
 Zwartewaal(51.8805442,4.2363681)
 '''
 
-# Define the locations
+# Define the locations, every port has a redius to define when the vessel is in the port
 locations = [
     {
         'name': 'Moerdijke Rotterdam',  # Checked
@@ -165,6 +166,7 @@ def checkLocation(lat, long):
         'destination': None
     }
 
+# The function can take a while, so we will print a progress bar
 def print_progress_bar(iteration, total, length=50):
     percent = (iteration + 1) / total
     filled_length = int(length * percent)
@@ -185,10 +187,12 @@ if __name__ == '__main__':
             print_progress_bar(index, total)
 
         for boat in boats:
+            # Check if the boat is in the current reading
             if boat['mmsi'] == full_data.iloc[index][0]['device']['mmsi']:
                 location = checkLocation(full_data.iloc[index][0]['navigation']['location']['lat'],
                                          full_data.iloc[index][0]['navigation']['location']['long'])
 
+                # Check if the boat is in the port
                 if location['port'] and (len(boat['trips']) == 0 or boat['trips'][-1]['arrival_time'] is not None):
                     boat['trips'].append({
                         'departure_time': datetime.fromisoformat(
@@ -204,6 +208,7 @@ if __name__ == '__main__':
                         'recordings': []
                     })
 
+                # Check if the boat is not in the port, is so, add the recording to the last trip
                 if not location['port'] and len(boat['trips']) > 0:
                     boat['trips'][-1]['recordings'].append({
                         'draught': full_data.iloc[index][0]['navigation']['draught'],
@@ -217,6 +222,7 @@ if __name__ == '__main__':
                         'course': full_data.iloc[index][0]['navigation']['course']
                     })
 
+                # Check if the boat is in the port and the last trip is not finished, if so, set the arrival time
                 if location['port'] and location['destination']['name'] != boat['trips'][-1]['departure']['name']:
                     boat['trips'][-1]['arrival_time'] = datetime.fromisoformat(
                         full_data.iloc[index][0]['navigation']['time']).timestamp()
@@ -227,11 +233,6 @@ if __name__ == '__main__':
                     }
 
     sys.stdout.write("\nDone!\n")
-
-    #Save the data to a JSON file
-    #with open('boats.json', 'w') as outfile:
-    #    json.dump(boats, outfile, indent=4)
-    #
 
     print('Calculating distances...')
     #Toegevoegd
@@ -299,6 +300,7 @@ if __name__ == '__main__':
             'imo': boat['imo'],
         }
 
+        #For testing, only specific boats were tested, add the mmsi below
         if(boat['mmsi'] != 244010773): #Now it is Levante
             continue
 
@@ -334,10 +336,12 @@ if __name__ == '__main__':
                 #Check if the boat needs an impossible speed to reach the destination
                 timetillend = trip['arrival_time'] - recording['time'] # Time till end in seconds
 
+                #A speed greater than 15 m/s is not possible, skip this record
                 if(recording['distance_to_end'] / timetillend > 15):
                     indexFault += 1
                     continue
 
+                #Append the results
                 result.append({
                     **boat_info,
                     **trip_info,
@@ -357,45 +361,4 @@ if __name__ == '__main__':
 
     print('Saving trip recordings per boat...')
 
-exit()
-trip_recordings = {}
 
-for boat in boats:
-    trip_recordings[boat['name']] = []
-    
-    for trip in boat['trips']:
-        if trip['arrival_time'] is None:
-            continue
-        
-        trip_data = {
-            'departure_time': trip['departure_time'],
-            'departure_lat': trip['departure']['lat'],
-            'departure_long': trip['departure']['long'],
-            'departure_name': trip['departure']['name'],
-            'arrival_time': trip['arrival_time'],
-            'arrival_lat': trip['arrival']['lat'],
-            'arrival_long': trip['arrival']['long'],
-            'arrival_name': trip['arrival']['name'],
-            'recordings': []
-        }
-
-        for recording in trip['recordings']:
-            recording_data = {
-                'time': recording['time'],
-                'speed': recording['speed'],
-                'heading': recording['heading'],
-                'location_lat': recording['location']['lat'],
-                'location_long': recording['location']['long'],
-                'course': recording['course'],
-                'distance_to_end': recording['distance_to_end']
-            }
-            trip_data['recordings'].append(recording_data)
-        
-        trip_recordings[boat['name']].append(trip_data)
-
-# Save the trip recordings to a JSON file
-output_file = 'trip_recordings_unique.json'
-with open(output_file, 'w') as outfile:
-    json.dump(trip_recordings, outfile, indent=4)
-
-print(f'Trip recordings saved to {output_file}')

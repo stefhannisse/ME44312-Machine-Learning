@@ -11,7 +11,7 @@ import os
 import matplotlib.pyplot as plt
 
 #Change the path to the location of the cleaned data
-path_to_data = os.getcwd() + r'/../Cleaning/boats_cleaned.json'
+#path_to_data = os.getcwd() + r'/../Cleaning/boats_cleaned.json'
 
 # Import the boats_cleaned
 #data = pd.read_json(path_to_data, convert_dates=False)
@@ -19,7 +19,7 @@ path_to_data = os.getcwd() + r'/../Cleaning/boats_cleaned.json'
 # Remove the values where the time_delta > 1.5e6
 
 # Import the x_test from Neural net
-data = pd.read_json(os.getcwd() + r'/Neural_net/x_test.json', convert_dates=False)
+data = pd.read_json(os.getcwd() + r'\..\Cleaning\test_data.json', convert_dates=False)
 
 #Remove the values where the time_delta > 1.5e6
 #data = data[data['time_delta'] < 1.5e6]
@@ -31,7 +31,8 @@ data = pd.read_json(os.getcwd() + r'/Neural_net/x_test.json', convert_dates=Fals
 model = LinearRegression()
 
 #Get the feature values
-X = data[['distance_to_end', 'draught', 'to_bow', 'to_stern', 'to_port', 'to_starboard']].values
+X = data[['distance_to_end', 'to_port', 'to_bow', 'to_stern', 'to_starboard', 'draught']].values
+y = data['time_delta'].values
 
 '''
 Performance so far:
@@ -55,7 +56,7 @@ print('Amount of data points:', X)
 #Get the ETA values
 #y = data['time_delta'].values
 #Get the y values from the Neural net folder, file y_test.json
-y = pd.read_json(os.getcwd() + r'/Neural_net/y_test.json', convert_dates=False).values.flatten()
+#y = pd.read_json(os.getcwd() + r'\..\Cleaning\test_data.json', convert_dates=False).values.flatten()
 
 #indexes = [i for i, v in enumerate(y) if v > 1.5e6]
 #Remove these indexes from y and X
