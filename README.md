@@ -13,16 +13,28 @@ This project was developed for the course ME44312 at TU Delft by team number 2. 
 
 ```
 ├── .idea/                        # PyCharm IDE configuration files
+├── raw_data_rotterdam/           # Raw AIS datapoints for the Port of Rotterdam
+│   ├── raw_ais_data_2021_rotterdam_1609459200.0_1609545600.0.json  # Sample raw AIS data file
+│   └── ...                       # Additional raw AIS data files
 ├── Neural_net/                   # Neural network implementation
-│   ├── scaling.py                # Data scaling and neural network training
-│   └── test_data.py              # Testing the trained neural network model
-├── Cleaning/                     # Data cleaning scripts and output, used for the training of both models
+│   ├── Network_training.py       # Neural network training pipeline
+│   ├── Network_visualisation.py  # Visualization of neural network performance
+│   └── trained_model.h5          # Saved trained neural network model
+├── Cleaning/                     # Data cleaning scripts and output
+│   ├── Cleaning_location.py      # Script to clean and process location data
+│   ├── Training_split.py         # Script to split data into training/test sets
+│   └── boats_cleaned_*.json      # Cleaned boat data ready for model training
 ├── Regression/                   # Regression model implementations
 │   ├── RandomForestRegressor.py  # Random Forest regression model
 │   ├── feature_regression_individual.py  # Individual feature analysis
 │   ├── multiple_regression.py    # Multiple linear regression implementation
 │   └── multiple_regression_test.py  # Testing the multiple regression model
-└── ais_predict_ships.py          # Script for analyzing ship data and building datasets
+├── Trip_visualisations/          # Visualizations of ship trips and data
+│   ├── plot_nb.ipynb             # Jupyter notebook for creating HTML visualizations
+│   └── HTML/                     # HTML-based trip visualizations
+│       ├── trudie_trips.html     # Visualization for ship "TRUDIE"
+│       └── ...                   # Additional ship visualizations
+└── README.md                     # Project documentation
 ```
 
 ## Features
@@ -33,6 +45,14 @@ The models predict ship arrival times based on the following features:
 - Speed
 - Draught (depth of a ship's keel below the water)
 - Location coordinates
+
+## Data Processing
+
+The project processes raw AIS data from the Port of Rotterdam (stored in `raw_data_rotterdam/`). The data cleaning process in the `Cleaning/` directory:
+1. Identifies ship trips between ports using geofencing
+2. Calculates distances between consecutive positions and to destination
+3. Processes time data to determine time-to-arrival values
+4. Splits data into training and testing sets
 
 ## Model Approaches
 
@@ -45,27 +65,25 @@ The `Regression/` directory contains multiple regression approaches:
 - Multiple Linear Regression combining several features
 - Random Forest Regression for handling non-linear relationships
 
-## Data Processing
-
-The project uses AIS data from the Port of Rotterdam. Raw data is processed to extract relevant features and create training/testing datasets. The data cleaning process appears to be handled in the `Cleaning/` directory (scripts not visible in this repo snapshot).
-
 ## Performance
 
 Models are evaluated using metrics such as:
 - Mean Squared Error (MSE)
 - Root Mean Squared Error (RMSE)
 
-Visualizations include:
+Visualizations in the `Trip_visualisations/` directory include:
 - Actual vs. Predicted arrival time plots
 - Error distribution plots
 - Training performance plots for neural networks
+- Interactive HTML visualizations of ship routes and trips
 
 ## Usage
 
 To use these models:
-1. Clean and prepare your ship data
-2. Train a model using either `Neural_net/scaling.py` or the regression models
+1. Clean and prepare your ship data using scripts in `Cleaning/`
+2. Train a model using either `Neural_net/Network_training.py` or the regression models
 3. Test the model's performance with the corresponding test scripts
+4. Visualize trips using the Jupyter notebook in `Trip_visualisations/`
 
 ## Requirements
 
@@ -76,3 +94,4 @@ To use these models:
 - numpy
 - matplotlib
 - geopy
+- Jupyter (for visualization notebook)
